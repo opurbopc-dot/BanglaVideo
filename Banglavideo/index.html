@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Lover BD</title>
+
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- 🔴 Monetag SDK Script Tag (Monetag Dashboard থেকে প্রাপ্ত) -->
+  <script src="https://alwingulla.com/88/tag.min.js" data-zone="YOUR_ZONE_ID" async data-cfasync="false"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+      padding: 12px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #6366f1;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .cat-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .cat-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .thumbnail-container {
+      position: relative;
+      width: 100%;
+      height: 110px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .thumbnail-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .card h4 {
+      font-size: 12px;
+      margin: 8px 0;
+      line-height: 1.3;
+      height: 32px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .unlock-btn {
+      width: 100%;
+      background: #6366f1;
+      color: #ffffff;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+
+    .unlock-btn.unlocked {
+      background: #22c55e;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>Family Lover BD</h2>
+  </header>
+
+  <div class="categories">
+    <button class="cat-btn active">All Videos</button>
+    <button class="cat-btn">Choto</button>
+    <button class="cat-btn">Celebrity</button>
+    <button class="cat-btn">Most Viral</button>
+  </div>
+
+  <div class="section-title">🔥 Trending Now</div>
+
+  <div class="grid" id="video-grid">
+    <p style="text-align: center; grid-column: span 2;">Loading videos...</p>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const clickCounts = {};
+
+    // JSON ফাইল থেকে ভিডিও লোড করা
+    async function loadVideos() {
+      try {
+        const response = await fetch('videos.json');
+        const videos = await response.json();
+        renderVideos(videos);
+      } catch (error) {
+        console.error('Error loading videos:', error);
+        document.getElementById('video-grid').innerHTML = '<p>Failed to load videos.</p>';
+      }
+    }
+
+    // গ্রিড রেন্ডার করা
+    function renderVideos(videos) {
+      const grid = document.getElementById('video-grid');
+      grid.innerHTML = '';
+
+      videos.forEach(video => {
+        clickCounts[video.id] = 0;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div>
+            <div class="thumbnail-container">
+              <span class="badge">${video.badge}</span>
+              <img src="${video.thumb}" alt="Thumbnail">
+            </div>
+            <h4>${video.title}</h4>
+          </div>
+          <button class="unlock-btn" id="btn-${video.id}" onclick="handleClick(${video.id}, '${video.targetUrl}')">
+            🔒 Unlock Link (<span id="count-${video.id}">0</span>/3)
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Monetag Ad Show করার মেথড
+    function triggerMonetagAd(callback) {
+      if (typeof show_nyb === 'function') {
+        show_nyb().then(() => {
+          if (callback) callback();
+        }).catch(() => {
+          if (callback) callback();
+        });
+      } else {
+        if (callback) callback();
+      }
+    }
+
+    // বাটন ক্লিক হ্যান্ডলার
+    function handleClick(id, targetUrl) {
+      if (clickCounts[id] < 3) {
+        triggerMonetagAd(() => {
+          clickCounts[id]++;
+          document.getElementById(`count-${id}`).innerText = clickCounts[id];
+
+          if (clickCounts[id] === 3) {
+            const btn = document.getElementById(`btn-${id}`);
+            btn.classList.add('unlocked');
+            btn.innerHTML = "▶ Watch Now";
+          }
+        });
+      } else {
+        if (tg.openLink) {
+          tg.openLink(targetUrl);
+        } else {
+          window.open(targetUrl, '_blank');
+        }
+      }
+    }
+
+    loadVideos();
+  </script>
+</body>
+</html>
