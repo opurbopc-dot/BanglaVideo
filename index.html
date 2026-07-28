@@ -10,6 +10,7 @@
 
   <!-- 🔴 Monetag SDK Script Tag (Monetag Dashboard থেকে প্রাপ্ত) -->
   <script src="https://alwingulla.com/88/tag.min.js" data-zone="YOUR_ZONE_ID" async data-cfasync="false"></script>
+  <script src='//libtl.com/sdk.js' data-zone='11445340' data-sdk='show_11445340'></script>
 
   <style>
     * {
@@ -212,10 +213,11 @@
 
     // Monetag Ad Show করার মেথড
     function triggerMonetagAd(callback) {
-      if (typeof show_nyb === 'function') {
-        show_nyb().then(() => {
+      if (typeof show_11445340 === 'function') {
+        show_11445340().then(() => {
           if (callback) callback();
-        }).catch(() => {
+        }).catch((e) => {
+          console.log('Ad closed or error:', e);
           if (callback) callback();
         });
       } else {
